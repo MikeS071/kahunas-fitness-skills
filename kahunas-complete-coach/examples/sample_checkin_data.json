@@ -1,0 +1,186 @@
+{
+  "meta": {
+    "extraction_timestamp": "2025-03-27T15:30:00Z",
+    "user": "Michal Szalinski",
+    "user_id": "f848cd2b-43fa-417d-8686-5d15063b83eb",
+    "email": "michal.szalinski@gmail.com",
+    "source": "https://kahunas.io/dashboard",
+    "extraction_method": "Browser automation with JavaScript evaluation",
+    "version": "5.0",
+    "checkins_processed": 1,
+    "tabs_extracted": ["checkin", "nutrition", "workout", "logs"]
+  },
+  "user_profile": {
+    "name": "Michal Szalinski",
+    "email": "michal.szalinski@gmail.com",
+    "phone": "0407625875",
+    "package": "Men's Physique Mentorship 2024",
+    "total_weeks": 31,
+    "start_weight_kg": 85,
+    "current_weight_kg": 76.6,
+    "age": 54,
+    "check_in_day": "Friday"
+  },
+  "checkins_complete": [
+    {
+      "checkin_id": "8525e176-6601-42f9-8d3c-ac4c9aaacb5e",
+      "checkin_number": "29th",
+      "day": "Friday",
+      "date": "27 Mar, 2026",
+      "submission_time": "01:05 PM",
+      "assigned_time": "01:00 PM",
+      "tabs": {
+        "checkin": {
+          "qa_pairs": [
+            {
+              "question": "Waist Circumference (belly button height in cm)",
+              "answer": "88",
+              "category": "measurement"
+            },
+            {
+              "question": "HUNGER levels (1 constantly full & bloated, 10 stomach always rumbling)",
+              "answer": "5",
+              "category": "rating"
+            },
+            {
+              "question": "Rate APPETITE(1 not thinking about food, 10 always craving next meal)",
+              "answer": "5",
+              "category": "rating"
+            },
+            {
+              "question": "How Stressful was this week/10? (1 being stress free and 10 being extreme stress)",
+              "answer": "4",
+              "category": "rating"
+            },
+            {
+              "question": "Rate your motivation levels for training (1: dread it, 10: highlight of the day)",
+              "answer": "8",
+              "category": "rating"
+            },
+            {
+              "question": "Are your workouts taking longer than usual to complete?",
+              "answer": "yes",
+              "category": "boolean"
+            },
+            {
+              "question": "What exercises did you struggle with this week? (if any)",
+              "answer": "None all good",
+              "category": "text"
+            },
+            {
+              "question": "Please detail any injuries/niggles you exerienced this week",
+              "answer": "Both arms have tennis elbow issues. Need to go see a doctor about it's been too long and not improving.",
+              "category": "text"
+            },
+            {
+              "question": "Do you feel recovered enough between heavy compound sets? (heart rate and breathing has returned to pre-set baseline before the next set)",
+              "answer": "yes",
+              "category": "boolean"
+            },
+            {
+              "question": "Rate the quality of muscle pumps during your workouts",
+              "answer": "Good Pumps",
+              "category": "text"
+            },
+            {
+              "question": "How many sessions per week are you working on mobility by rolling out/ stretching during the week? [more than 10mins]",
+              "answer": "1",
+              "category": "numeric"
+            },
+            {
+              "question": "Which was the EASIEST workout this week? Why?",
+              "answer": "All. I reduced some weights to help with the elbows",
+              "category": "text"
+            },
+            {
+              "question": "Which was the HARDEST workout this week? Why?",
+              "answer": "All. Tennis elbow has reduced my strength significantly within arm exercises",
+              "category": "text"
+            }
+          ]
+        },
+        "nutrition_plan": {
+          "qa_pairs": [
+            {
+              "question": "Waist Circumference (belly button height in cm)",
+              "answer": "88",
+              "category": "measurement"
+            },
+            {
+              "question": "How are you managing with the nutrition plan?",
+              "answer": "Not on plan this week",
+              "category": "compliance"
+            },
+            {
+              "question": "Please detail any untracked meals consumed this week (what & which day)",
+              "answer": "I had lots of ingredients that had to be used or be thrown out. So I made meals roughly similar to plan but a little richer. This week will be a bit up/down. Plus had work lunches and other work events so was hard to keep things on plan this week.",
+              "category": "free_text"
+            },
+            {
+              "question": "Please detail any alcohol consumption this week (# of standard drinks, which days)",
+              "answer": "None",
+              "category": "alcohol"
+            },
+            {
+              "question": "How many litres of fluids (on average) are you consuming daily?",
+              "answer": "4",
+              "category": "hydration"
+            },
+            {
+              "question": "Have you experienced any gastric distress this week? Please detail:",
+              "answer": "No",
+              "category": "gastric"
+            },
+            {
+              "question": "What is your daily average intake of stimulants (includes caffeine, nootropics, & pre-workout)",
+              "answer": "3-4 coffees",
+              "category": "stimulants"
+            },
+            {
+              "question": "What time of the day do you feel most hungry?",
+              "answer": "6am",
+              "category": "hunger_timing"
+            }
+          ]
+        },
+        "workout_program": {
+          "note": "Workout program data would be extracted from the Workout tab - contains exercises, sets, reps, weights",
+          "extracted": false
+        },
+        "logs": {
+          "note": "Logs tab data would be extracted - contains coach feedback and additional notes",
+          "extracted": false
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total_checkins": 1,
+    "total_qa_pairs_checkin": 13,
+    "total_qa_pairs_nutrition": 8,
+    "key_findings": {
+      "nutrition_compliance": "Not on plan this week - due to work events and using up ingredients",
+      "injuries": "Tennis elbow in both arms - needs medical attention",
+      "hydration": "4L daily - good",
+      "alcohol": "None - good",
+      "stimulants": "3-4 coffees daily",
+      "hunger": "6am - early morning",
+      "waist": "88cm",
+      "mobility": "1 session per week - needs improvement",
+      "ratings": {
+        "hunger": 5,
+        "appetite": 5,
+        "stress": 4,
+        "motivation": 8
+      }
+    },
+    "recommendations": [
+      "Address tennis elbow with medical professional",
+      "Increase mobility/stretching sessions (currently 1x/week)",
+      "Plan ahead for work events to maintain nutrition compliance",
+      "Consider reducing coffee intake if affecting sleep/recovery",
+      "Continue good hydration (4L daily)",
+      "Maintain alcohol abstinence"
+    ]
+  }
+}

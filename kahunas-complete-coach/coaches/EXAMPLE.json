@@ -1,0 +1,21 @@
+{
+  "name": "Coach Name",
+  "email": "coach@example.com",
+  "kahunas": {
+    "coach_email": "coach@kahunas.io",
+    "coach_password": "your-kahunas-password",
+    "deactivated_clients": []
+  },
+  "report_recipient": "coach@example.com",
+  "openrouter": {
+    "api_key": "sk-or-v1-xxxxx"
+  },
+  "smtp": {
+    "host": "smtp.resend.com",
+    "port": 587,
+    "user": "your@domain.com",
+    "password": "re_xxxxx"
+  },
+  "data_dir": null,
+  "schedule": "30 10 * * *"
+}
