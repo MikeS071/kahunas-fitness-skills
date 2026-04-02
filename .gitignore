@@ -1,9 +1,23 @@
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.egg-info/
 .eggs/
 venv*/
+
+# Environment and credentials
 .env
 *.log
 .DS_Store
+
+# Sensitive coach data - DO NOT COMMIT
+coaches/*.json
+!coaches/EXAMPLE.json
+
+# Example/extracted data - keep structure only
+examples/sample_checkin_data.json
+
+# Local extraction outputs (any .json at root level)
+*.json
+!examples/*.json
