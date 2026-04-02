@@ -1,7 +1,7 @@
 ---
 name: kahunas-debug-resilience-patterns
 description: Debugging and resilience patterns discovered while building the Kahunas.io workflow reliability layer. Documents cron environment quirks, AJAX login handling, Playwright cleanup, and Telegram notification gotchas.
-version: 1.0.0
+version: 1.1.0
 category: fitness
 created: 2026-04-01
 ---
@@ -28,6 +28,44 @@ if env_file.exists():
 ```
 
 **Lesson:** Any script that depends on env vars and runs via cron must explicitly load `.env`.
+
+---
+
+## 1b. LLM Scripts Also Need `.env` Loading
+
+**Problem:** `generate_llm_report.py` failed with `[LLM call failed: HTTP Error 401: Unauthorized]` even though the same workflow succeeded in interactive mode.
+
+**Why:** The `call_llm()` function didn't load `.env` — it relied on the parent process having already set env vars. When called from `multi_client_workflow.py`, env vars were set correctly. But when called directly or in certain cron contexts, `OPENROUTER_API_KEY` was missing.
+
+**Diagnosis:**
+```python
+# In call_llm():
+api_key = os.environ.get('OPENROUTER_API_KEY', '')
+if not api_key:
+    return "[LLM unavailable: No API key]"  # Silent fallback, no error logged
+```
+
+**Fix:** Added `load_env()` helper and call it before reading the API key:
+```python
+def load_env():
+    """Load .env file if present (for cron job context)."""
+    env_file = Path.home() / ".hermes/.env"
+    if env_file.exists():
+        with open(env_file) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, _, val = line.partition('=')
+                    if key not in os.environ:
+                        os.environ[key] = val
+
+def call_llm(prompt, model="anthropic/claude-opus-4.6"):
+    import urllib.request
+    load_env()  # CRITICAL: Load .env before reading API key
+    api_key = os.environ.get('OPENROUTER_API_KEY', '')
+```
+
+**Lesson:** Any script that makes external API calls should self-contain `.env` loading, even if the calling workflow is supposed to set env vars. Defensive programming wins.
 
 ---
 

@@ -194,11 +194,27 @@ def extract_qa_text(checkins, max_checkins=3):
     return ''.join(lines)
 
 
+def load_env():
+    """Load .env file if present (for cron job context)."""
+    env_file = Path.home() / ".hermes/.env"
+    if env_file.exists():
+        with open(env_file) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, _, val = line.partition('=')
+                    import os
+                    if key not in os.environ:
+                        os.environ[key] = val
+
 def call_llm(prompt, model="anthropic/claude-opus-4.6"):
     """Call OpenRouter API for LLM analysis."""
     import urllib.request
     
-    api_key = os.environ.get('OPENROUTER_API_KEY', '')
+    # Load .env for cron context (env vars may not be inherited from parent process)
+    load_env()
+    
+    api_key=os.environ.get('OPENROUTER_API_KEY', '')
     if not api_key:
         return "[LLM unavailable: No API key]"
     
