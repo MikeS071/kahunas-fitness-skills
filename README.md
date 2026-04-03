@@ -4,12 +4,11 @@ A production-ready automation pipeline for [Kahunas.io](https://kahunas.io) fitn
 
 ## Overview
 
-This repository contains **4 interconnected skills** that power a complete daily workflow:
+This repository contains **3 interconnected skills** that power a complete daily workflow:
 
 | Skill | Purpose | Key Capabilities |
 |-------|---------|------------------|
 | **[kahunas-complete-coach](kahunas-complete-coach/)** | Main orchestrator | Multi-client workflow, LLM-powered report generation, HTML email delivery via Resend, CHFI 17-step methodology |
-| **[kahunas-data-extractor](kahunas-data-extractor/)** | Data extraction | Hybrid API + Playwright scraping, extracts all 4 tabs (Checkin, Nutrition Plan, Workout Program, Logs), pagination handling |
 | **[kahunas-session-recovery](kahunas-session-recovery/)** | Resilience | Resume interrupted extractions, merge partial files, checkpoint recovery |
 | **[kahunas-debug-resilience-patterns](kahunas-debug-resilience-patterns/)** | Debugging | Cron environment fixes, AJAX login patterns, Playwright cleanup, Telegram notifications |
 
@@ -22,11 +21,12 @@ cd kahunas-complete-coach
 # Run daily pipeline for a coach
 python scripts/multi_client_workflow.py --coach samantha --daily --generate --email
 
+# Or extract only (no report generation)
+python scripts/kahunas_extract.py --coach samantha --daily
+
 # Resend an existing report
 python scripts/resend_report.py --coach samantha --report /path/to/report.md
 ```
-
-See individual skill `HOWTO.md` files for detailed setup instructions.
 
 ## Architecture
 
@@ -34,21 +34,15 @@ See individual skill `HOWTO.md` files for detailed setup instructions.
 kahunas-fitness-skills/
 ├── kahunas-complete-coach/         # Main orchestrator & reporting
 │   ├── coaches/                     # Per-coach JSON configs (credentials)
-│   ├── scripts/                     # Workflow orchestration
-│   │   ├── multi_client_workflow.py    # Main entry point
+│   ├── scripts/                     # Workflow scripts
+│   │   ├── multi_client_workflow.py    # Full pipeline (extract + report + email)
+│   │   ├── kahunas_extract.py           # Extraction module (shared logic)
 │   │   ├── generate_llm_report.py      # LLM-powered report generation
 │   │   ├── email_utils.py              # Resend API integration
 │   │   └── resend_report.py             # Utility to resend reports
 │   ├── source_materials/            # CHFI methodology docs
 │   ├── references/                  # Quick reference guides
 │   └── HOWTO.md                     # Setup & usage guide
-│
-├── kahunas-data-extractor/          # Data extraction layer
-│   ├── scripts/
-│   │   ├── kahunas_api_extractor.py         # API-based extraction
-│   │   ├── kahunas_comprehensive_extractor.py  # Playwright tab scraping
-│   │   └── kahunas_multi_client_extractor.py  # Multi-client support
-│   └── HOWTO.md                     # Extraction guide
 │
 ├── kahunas-session-recovery/        # Recovery procedures
 │   └── scripts/
@@ -58,12 +52,26 @@ kahunas-fitness-skills/
     └── SKILL.md                     # Patterns & solutions
 ```
 
+## Python Environment
+
+All scripts require Playwright. The shared Python environment is at:
+
+```
+~/venv-playwright/
+```
+
+This environment is shared across all skills and must have Playwright installed:
+
+```bash
+~/venv-playwright/bin/playwright install chromium
+```
+
 ## Key Features
 
 ### Complete Data Extraction
 - **All 4 Kahunas tabs** captured: Checkin, Nutrition Plan, Workout Program, Logs
 - **Hybrid approach**: Fast API for metadata, Playwright for detailed Q&A
-- **Pagination handled**: Automatically finds and processes all pages
+- **Multi-client support**: Handles all coach clients with broken web pagination
 
 ### Evidence-Based Analysis
 - **ZOE**: Metabolic health tracking (gut health, food responses, glucose patterns)
@@ -85,7 +93,7 @@ kahunas-fitness-skills/
 ## Prerequisites
 
 - Python 3.8+
-- Playwright (`pip install playwright && playwright install`)
+- Playwright (`~/venv-playwright/bin/pip install playwright && ~/venv-playwright/bin/playwright install chromium`)
 - Kahunas.io account with API access
 - [OpenRouter](https://openrouter.ai) API key (for LLM reports)
 - [Resend](https://resend.com) API key (for email delivery)
@@ -111,8 +119,7 @@ coaches/*.json
 
 ## Support
 
-- **Extraction issues**: See `kahunas-data-extractor/HOWTO.md`
-- **Report generation**: See `kahunas-complete-coach/HOWTO.md`
+- **Report generation & extraction**: See `kahunas-complete-coach/HOWTO.md`
 - **Session recovery**: See `kahunas-session-recovery/SKILL.md`
 - **Debugging**: See `kahunas-debug-resilience-patterns/SKILL.md`
 

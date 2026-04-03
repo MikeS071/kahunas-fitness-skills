@@ -1,7 +1,7 @@
 ---
 name: kahunas-complete-coach
 description: Complete fitness analysis and coaching system combining personal optimization (ZOE/J3/RP Strength frameworks) with professional client coaching (Clean Health Fitness Institute 17-step process). Analyzes Kahunas.io checkin data for trends, correlations, metabolic health, training periodization, and generates actionable weekly recommendations.
-version: 5.0.0
+version: 6.0.0
 
 critical_discovery:
   api_vs_scrape: |
@@ -68,6 +68,46 @@ critical_discovery:
     "REPLACE_WITH_REAL_PASSWORD" will silently fail (no error message on page).
     Always verify credentials work interactively first.
 
+  v60_refactoring: |
+    v6.0 (Apr 2026): Extraction logic moved to kahunas_extract.py module.
+
+    ARCHITECTURE:
+    - kahunas_extract.py: Common extraction module (login, clients, scraping, date parsing)
+    - multi_client_workflow.py: Thin orchestrator (calls kahunas_extract + report generation + email)
+    - Both scripts are CLI frontends to the same underlying logic
+
+    MODULE FUNCTIONS (kahunas_extract.py):
+    - login_and_get_token(email, password) -> (pw, context, page, token)
+    - get_active_clients(token, deactivated_emails) -> (active, no_checkin)
+    - filter_clients_by_uuid(clients, partial_uuids) -> filtered_clients  # FIXED
+    - has_new_checkin(uuid, api_checkins, clients_dir) -> bool  # FIXED
+    - extract_client_checkins(pw, page, token, clients, clients_dir, max_checkins=3)
+    - parse_checkin_date(date_str) -> date  # FIXED: supports "03 Apr, 2026" format
+
+    RUNNING:
+    - python3 scripts/kahunas_extract.py --coach samantha --clients 9b61b431
+    - python3 scripts/multi_client_workflow.py --coach samantha --daily --generate --email
+
+  partial_uuid_matching_bug: |
+    CRITICAL (v6.0 FIXED): Client filtering by UUID was doing exact string matching.
+    
+    SYMPTOM: --clients 9b61b431 matched "9b61b431" exactly, not "9b61b431-a1b2-...".
+    RESULT: 0 clients processed, empty output.
+    
+    FIX: filter_clients_by_uuid() now uses .startswith() matching:
+      For each client: if client['uuid'].lower().startswith(partial_uuid.lower()) -> match
+      Example: "9b61b431".startswith("9b61b431") = True ✓
+
+  date_parsing_bug: |
+    CRITICAL (v6.0 FIXED): Daily mode never detected new checkins because date parsing
+    did not handle Kahunas format "03 Apr, 2026".
+    
+    SYMPTOM: has_new_checkin() returned False for genuinely new checkins.
+    CAUSE: parse_checkin_date() only handled "%Y-%m-%d" and "%d/%m/%Y" formats.
+    
+    FIX: Added "%d %b, %Y" to parse_checkin_date():
+      datetime.strptime("03 Apr, 2026", "%d %b, %Y").date() -> 2026-04-03 ✓
+
   mistune_v320_plugin_syntax: |
     CRITICAL (2 Apr 2026): mistune v3.2.0 changed plugin specification format.
     
@@ -120,10 +160,20 @@ workflow:
     
 step_1b_multi_client_extract:
     action: "Extract data for ALL coach clients (active only)"
-    script: "scripts/multi_client_workflow.py" (v5.0+)
+    script: "scripts/kahunas_extract.py" (v6.0+) or "scripts/multi_client_workflow.py" (v6.0+)
     output: "kahunas_api_data/clients/client_<name>_<uuid_short>_YYYYMMDD.json"
     notes: |
-      IMPORTANT - Extraction workflow (v5.0):
+      IMPORTANT - Extraction workflow (v6.0):
+
+      TWO ENTRY POINTS (same underlying logic):
+      1. kahunas_extract.py - Standalone extraction (thin, focused on data only)
+         python3 scripts/kahunas_extract.py --coach samantha --clients 9b61b431
+         python3 scripts/kahunas_extract.py --coach samantha --daily
+
+      2. multi_client_workflow.py - Full pipeline (extraction + reports + email)
+         python3 scripts/multi_client_workflow.py --coach samantha --daily --generate --email
+
+      BOTH SCRIPTS USE THE SAME underlying extraction logic from kahunas_extract module.
 
       1. LOGIN via Playwright, get token: page.evaluate("window.web_auth_token")
 

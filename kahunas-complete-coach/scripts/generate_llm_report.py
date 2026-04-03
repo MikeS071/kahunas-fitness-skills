@@ -93,7 +93,7 @@ Generate a concise, punchy weekly fitness review for ONE client based ONLY on th
 **Client:** [NAME] | **Checkin:** [DATE]
 
 ## 1. WEIGHT / WAIST
-| Metric | Value | Target | Status |
+| Metric | Current Value | Previous Value | Delta | Status or Trend |
 [2-3 sentence analysis - cite THEIR numbers]
 
 ## 2. TRAINING & PROGRESSION
